@@ -1,5 +1,8 @@
 def main_screen():
-    
+    """
+    Shows the application's main menu
+    :return:
+    """
     pass
 
 
