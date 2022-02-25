@@ -4,10 +4,7 @@ def main_screen():
 
 
 def merge_pdf_screen():
-    """
-    Shows the application's merge pdf screen
-    :return:
-    """
+    
     pass
 
 
