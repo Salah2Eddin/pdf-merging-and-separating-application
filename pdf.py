@@ -1,3 +1,7 @@
+"""
+    author:
+    date:
+"""
 def read_pdf(pdf_path):
     """
     Reads PDF file from given path and returns PdfFileReader Object.
