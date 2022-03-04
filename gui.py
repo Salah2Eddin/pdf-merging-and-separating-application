@@ -25,6 +25,7 @@ class FileInputField(QWidget):
         self.text_field.setFixedSize(
             self.width() - self.label.width() - 25, 25)
         self.text_field.move(self.label.width(), 0)
+        self.text_field.textChanged.connect(lambda x: self.text_area_edited(x))
 
         self.browse = QPushButton("...", self)
         self.browse.setFixedSize(25, 25)
@@ -51,6 +52,9 @@ class FileInputField(QWidget):
                                      "", "PDF (*.pdf)")
         if files:
             return files
+
+    def text_area_edited(self, x):
+        self.path = x
 
 
 class TextInput(QWidget):
