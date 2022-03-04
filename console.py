@@ -59,20 +59,15 @@ def separate_pages_screen():
     Shows the application's separate pages screen
     ::
     """
-    output_1 = PdfFileWriter()
-    output_2 = PdfFileWriter()
+
     pdf_file_path = input("Enter PDF File Path : ")
     pdf_path = open(pdf_file_path, 'rb')
     pdf = PdfFileReader(pdf_path)
-    num_of_pages = pdf.getNumPages()
-    for page in range(int(num_of_pages / 2)):
-        output_1.addPage(pdf.getPage(page))
-    for page in range(int(num_of_pages / 2), num_of_pages):
-        output_2.addPage(pdf.getPage(page))
-    output_1_stream = open("1st_Half.pdf", 'wb')
-    output_1.write(output_1_stream)
-    output_2_stream = open("2nd_Half.pdf", 'wb')
-    output_2.write(output_2_stream)
+    for page in range(pdf.getNumPages()):
+        output = PdfFileWriter()
+        output.addPage(pdf.getPage(page))
+        output_stream = open("Page_" + str(page + 1) + ".pdf", 'wb')
+        output.write(output_stream)
     print("\nDone! , Thanks For Using Our Application")
 
 
