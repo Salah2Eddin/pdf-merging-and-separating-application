@@ -71,7 +71,8 @@ class TextInput(QWidget):
             self.width() - self.label.width(), 25)
         self.text_field.move(self.label.width(), 0)
 
-        self.text = self.text_field.text
+    def get_text(self):
+        return self.text_field.text()
 
 
 class IntegerInput(QWidget):
@@ -93,7 +94,8 @@ class IntegerInput(QWidget):
             self.width() - self.label.width(), 25)
         self.text_field.move(self.label.width(), 0)
 
-        self.text = self.text_field.text
+    def get_number(self):
+        return int(self.text_field.text())
 
 
 class FieldsArea(QWidget):
@@ -133,10 +135,16 @@ class FieldsArea(QWidget):
         self.v_layout.addWidget(output_name)
 
         merge = QPushButton("Merge")
-        merge.clicked.connect(lambda: merge_pdf(pdf1_path.path,
-                                                pdf2_path.path,
-                                                output_name.text))
+        merge.clicked.connect(
+            lambda: self.merge_clicked(pdf1_path.path, pdf2_path.path,
+                                       output_name.get_text()))
         self.v_layout.addWidget(merge)
+
+    def merge_clicked(self, p1, p2, name):
+        merge_pdf(p1,
+                  p2,
+                  name)
+        self.clear_layout()
 
     def extract_fields(self):
         """
@@ -152,9 +160,13 @@ class FieldsArea(QWidget):
         self.v_layout.addWidget(page_number)
 
         extract = QPushButton("Extract")
-        extract.clicked.connect(lambda: extract_page(pdf_path.path,
-                                                     page_number.text))
+        extract.clicked.connect(lambda: self.extract_clicked(pdf_path.path,
+                                                             page_number.get_number()))
         self.v_layout.addWidget(extract)
+
+    def extract_clicked(self, p1, num):
+        extract_page(p1, num)
+        self.clear_layout()
 
     def separate_fields(self):
         """
@@ -167,8 +179,12 @@ class FieldsArea(QWidget):
         self.v_layout.addWidget(pdf_path)
 
         separate = QPushButton("Separate")
-        separate.clicked.connect(lambda: separate_pages(pdf_path.path))
+        separate.clicked.connect(lambda: self.separate_clicked(pdf_path.path))
         self.v_layout.addWidget(separate)
+
+    def separate_clicked(self, p):
+        separate_pages(p)
+        self.clear_layout()
 
 
 class ButtonsBox(QWidget):
