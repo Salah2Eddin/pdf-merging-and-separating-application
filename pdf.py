@@ -1,9 +1,20 @@
 """
     author: Mohamed Alaa Eddin & Salah Eddin Mohamed
     date: 4th March 2022
+    Functions for all operations
 """
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
+import exc
 import os
+
+
+def valid_pdf_path(pdf_path):
+    if os.path.isfile(pdf_path) and pdf_path.endswith(".pdf"):
+        return True
+    elif not os.path.isfile(pdf_path):
+        raise exc.NotPDF
+    else :
+        raise exc.NotPath
 
 
 def read_pdf(pdf_path):
@@ -12,14 +23,8 @@ def read_pdf(pdf_path):
     :param pdf_path: The path of the file to be read.
     :return: PdfFileReader Object
     """
-    if os.path.isfile(pdf_path) and pdf_path.endswith(".pdf"):
+    if valid_pdf_path(pdf_path):
         return PdfFileReader(pdf_path)
-    elif not os.path.isfile(pdf_path):
-        print("Not Correct Path. if there is any \" remove them")
-        return None
-    else:
-        print("Not PDF File")
-        return None
 
 
 def merge_pdf(first_pdf_path, second_pdf_path, output_name):
@@ -34,9 +39,6 @@ def merge_pdf(first_pdf_path, second_pdf_path, output_name):
     merger = PdfFileMerger()
     pdf1 = read_pdf(first_pdf_path)
     pdf2 = read_pdf(second_pdf_path)
-
-    if not (pdf1 and pdf2):
-        return
 
     merger.append(pdf1)
     merger.append(pdf2)

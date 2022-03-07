@@ -3,9 +3,20 @@
     date: 2nd March 2022
     file with all classes for GUI application
 """
-from PyQt5 import QtGui
+import sys
+
+import exc
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import *
 from pdf import merge_pdf, extract_page, separate_pages
+
+
+def show_error_message(parent, title, message):
+    bx = QMessageBox.critical(parent, title, message)
+
+
+def show_message(parent, title, message):
+    bx = QMessageBox.information(parent, title, message)
 
 
 class FileInputField(QWidget):
@@ -109,6 +120,7 @@ class FieldsArea(QWidget):
 
     def __init__(self):
         super(QWidget, self).__init__()
+        sys.excepthook = self.exception_raised
         self.setFixedWidth(550)
 
         self.v_layout = QVBoxLayout()
@@ -148,6 +160,8 @@ class FieldsArea(QWidget):
         merge_pdf(p1,
                   p2,
                   name)
+        show_message(self, "Complete", "Merging is complete.\nYou can find "
+                                       "the output under \"outputs\" folder.")
         self.clear_layout()
 
     def extract_fields(self):
@@ -164,12 +178,15 @@ class FieldsArea(QWidget):
         self.v_layout.addWidget(page_number)
 
         extract = QPushButton("Extract")
-        extract.clicked.connect(lambda: self.extract_clicked(pdf_path.path,
-                                                             page_number.get_number()))
+        extract.clicked.connect(lambda:
+                                self.extract_clicked(pdf_path.path,
+                                                     page_number.get_number()))
         self.v_layout.addWidget(extract)
 
     def extract_clicked(self, p1, num):
         extract_page(p1, num)
+        show_message(self, "Complete", "Extracting is complete.\nYou can find "
+                                       "the output under \"outputs\" folder.")
         self.clear_layout()
 
     def separate_fields(self):
@@ -188,7 +205,26 @@ class FieldsArea(QWidget):
 
     def separate_clicked(self, p):
         separate_pages(p)
+        show_message(self, "Complete", "Separating is complete.\nYou can find "
+                                       "the output under \"outputs\" folder.")
         self.clear_layout()
+
+    def exception_raised(self, exc_type, exc_val, exc_tb):
+        if exc_type == exc.NotPath:
+            show_error_message(self, "Critical Error",
+                               "There is an invalid path")
+        elif exc_type == exc.NotPDF:
+            show_error_message(self, "Critical Error",
+                               "A path doesn't lead to a PDF File")
+        elif exc_type == ValueError:
+            show_error_message(self, "Critical Error",
+                               "Please enter a number")
+        elif exc_type == IndexError:
+            show_error_message(self, "Critical Error", "This page doesn't "
+                                                       "exist.")
+        else:
+            show_error_message(self, "Critical Error",
+                               exc_type)
 
 
 class ButtonsBox(QWidget):
@@ -229,6 +265,10 @@ class App(QWidget):
     def __init__(self):
         super(QWidget, self).__init__()
         self.setWindowTitle("PDF Merging and Separating Application")
+        self.setWindowFlags(
+            QtCore.Qt.WindowType.WindowCloseButtonHint |
+            QtCore.Qt.WindowType.WindowMinimizeButtonHint |
+            QtCore.Qt.WindowType.MSWindowsFixedSizeDialogHint)
 
         self.h_layout = QHBoxLayout()
         self.h_layout.setContentsMargins(10, 10, 5, 5)
